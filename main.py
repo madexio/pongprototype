@@ -8,18 +8,16 @@ def on_on_overlap(sprite, otherSprite):
         Ball.vy * ballAccelerationRate + randint(-50, 50))
     EnemyPaddle.start_effect(effects.spray, 200)
     scene.camera_shake(4, 200)
+    music.play(music.create_sound_effect(WaveShape.SQUARE,
+            200,
+            1,
+            255,
+            0,
+            100,
+            SoundExpressionEffect.NONE,
+            InterpolationCurve.CURVE),
+        music.PlaybackMode.UNTIL_DONE)
 sprites.on_overlap(SpriteKind.enemy, SpriteKind.projectile, on_on_overlap)
-
-def on_on_overlap2(sprite2, otherSprite2):
-    effects.confetti.start_screen_effect(1000)
-    scene.camera_shake(8, 1000)
-    if Ball.overlaps_with(leftNet):
-        info.player2.change_score_by(1)
-        ballReset()
-    elif Ball.overlaps_with(rightNet):
-        info.change_score_by(1)
-        ballReset()
-sprites.on_overlap(SpriteKind.projectile, SpriteKind.Collider, on_on_overlap2)
 
 # checks if player scores and hits 10 sets state to win
 
@@ -38,6 +36,34 @@ def ballSetup():
 # makes the enemy paddle follow the ball based on the vertical difference
 def enemyLogic():
     EnemyPaddle.vy = (Ball.y - EnemyPaddle.y) * 10
+
+def on_on_overlap2(sprite2, otherSprite2):
+    effects.confetti.start_screen_effect(1000)
+    scene.camera_shake(8, 1000)
+    if Ball.overlaps_with(leftNet):
+        info.player2.change_score_by(1)
+        ballReset()
+    elif Ball.overlaps_with(rightNet):
+        info.change_score_by(1)
+        ballReset()
+sprites.on_overlap(SpriteKind.projectile, SpriteKind.Collider, on_on_overlap2)
+
+def on_on_overlap3(sprite22, otherSprite22):
+    Ball.set_velocity(min(0 - Ball.vx * 1.5, 100),
+        Ball.vy * ballAccelerationRate + randint(-50, 50))
+    PlayerPaddle.start_effect(effects.spray, 200)
+    scene.camera_shake(4, 200)
+    music.play(music.create_sound_effect(WaveShape.SQUARE,
+            200,
+            1,
+            255,
+            0,
+            100,
+            SoundExpressionEffect.NONE,
+            InterpolationCurve.CURVE),
+        music.PlaybackMode.UNTIL_DONE)
+sprites.on_overlap(SpriteKind.player, SpriteKind.projectile, on_on_overlap3)
+
 # checks if opponent scored 10 and sets state to game over
 
 def on_player2_score():
@@ -54,14 +80,6 @@ def playerSetup():
     PlayerPaddle.set_position(10, 60)
     controller.move_sprite(PlayerPaddle, 0, 100)
     PlayerPaddle.set_stay_in_screen(True)
-
-def on_on_overlap3(sprite22, otherSprite22):
-    Ball.set_velocity(min(0 - Ball.vx * 1.5, 100),
-        Ball.vy * ballAccelerationRate + randint(-50, 50))
-    PlayerPaddle.start_effect(effects.spray, 200)
-    scene.camera_shake(4, 200)
-sprites.on_overlap(SpriteKind.player, SpriteKind.projectile, on_on_overlap3)
-
 def netSetup():
     global leftNet, rightNet
     leftNet = sprites.create(assets.image("""
@@ -86,13 +104,14 @@ def enemySetup():
 def ballReset():
     Ball.set_position(80, 60)
     Ball.set_velocity(0, 0)
-    pause(1000)
+    pause(500)
     # set ball to go in one direction
     Ball.set_velocity(randint(-50, 50), randint(-50, 50))
     if Ball.vx < 0 and Ball.vx > -20:
         Ball.vx = -20
     elif Ball.vx > 0 and Ball.vx < 20:
         Ball.vx = 20
+    print(Ball.vx)
 PlayerPaddle: Sprite = None
 rightNet: Sprite = None
 leftNet: Sprite = None
@@ -100,21 +119,16 @@ EnemyPaddle: Sprite = None
 Ball: Sprite = None
 ballAccelerationRate = 0
 ballAccelerationRate = 1.2
+music.play(music.create_song(hex("""
+        00780004080200
+    """)),
+    music.PlaybackMode.UNTIL_DONE)
 playerSetup()
 enemySetup()
 netSetup()
 ballSetup()
 
 def on_forever():
-    music.play(music.create_sound_effect(WaveShape.SINE,
-            5000,
-            0,
-            255,
-            0,
-            500,
-            SoundExpressionEffect.NONE,
-            InterpolationCurve.LINEAR),
-        music.PlaybackMode.IN_BACKGROUND)
     enemyLogic()
     Ball.start_effect(effects.trail, 50)
 forever(on_forever)

@@ -2,8 +2,7 @@
     "name": "PongPrototype",
     "description": "",
     "dependencies": {
-        "device": "*",
-        "carnival": "github:microsoft/arcade-carnival#v0.0.7"
+        "device": "*"
     },
     "files": [
         "main.blocks",
