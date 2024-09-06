@@ -68,7 +68,7 @@ function enemySetup () {
 function ballReset () {
     Ball2.setPosition(80, 60)
     Ball2.setVelocity(0, 0)
-    pause(1000)
+    pause(500)
     // set ball to go in one direction
     Ball2.setVelocity(randint(-50, 50), randint(-50, 50))
     if (Ball2.vx < 0 && Ball2.vx > -20) {
@@ -76,6 +76,7 @@ function ballReset () {
     } else if (Ball2.vx > 0 && Ball2.vx < 20) {
         Ball2.vx = 20
     }
+    console.log(Ball2.vx)
 }
 let PlayerPaddle: Sprite = null
 let rightNet: Sprite = null
