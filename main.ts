@@ -22,17 +22,6 @@ function ballSetup () {
 function enemyLogic () {
     EnemyPaddle.vy = (Ball.y - EnemyPaddle.y) * 10
 }
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Collider, function (sprite2, otherSprite2) {
-    effects.confetti.startScreenEffect(1000)
-    scene.cameraShake(8, 1000)
-    if (Ball.overlapsWith(leftNet)) {
-        info.player2.changeScoreBy(1)
-        ballReset()
-    } else if (Ball.overlapsWith(rightNet)) {
-        info.changeScoreBy(1)
-        ballReset()
-    }
-})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite22, otherSprite22) {
     Ball.setVelocity(Math.min(0 - Ball.vx * 1.5, 100), Ball.vy * ballAccelerationRate + randint(-50, 50))
     PlayerPaddle.startEffect(effects.spray, 200)
@@ -78,9 +67,20 @@ function ballReset () {
     }
     console.log(Ball.vx)
 }
-let PlayerPaddle: Sprite = null
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Collider, function (sprite2, otherSprite2) {
+    effects.confetti.startScreenEffect(2000)
+    scene.cameraShake(8, 1000)
+    if (Ball.overlapsWith(leftNet)) {
+        info.player2.changeScoreBy(1)
+        ballReset()
+    } else if (Ball.overlapsWith(rightNet)) {
+        info.changeScoreBy(1)
+        ballReset()
+    }
+})
 let rightNet: Sprite = null
 let leftNet: Sprite = null
+let PlayerPaddle: Sprite = null
 let EnemyPaddle: Sprite = null
 let Ball: Sprite = null
 let ballAccelerationRate = 0
